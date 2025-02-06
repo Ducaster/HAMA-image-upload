@@ -9,6 +9,7 @@ import {
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { UploadService } from './upload.service';
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
+import axios from 'axios';
 
 @Controller('upload')
 export class UploadController {
@@ -31,6 +32,11 @@ export class UploadController {
       files.map((file) => this.uploadService.uploadToS3(file, googleId)),
     );
 
-    return { images: uploadResults };
+    await axios.post(
+      'http://localhost:3003/thumbnail', // ✅ 썸네일 생성 API URL (3003 포트에서 실행된다고 가정)
+      { imageUrls: uploadResults },
+    );
+
+    return { imageUrls: uploadResults };
   }
 }

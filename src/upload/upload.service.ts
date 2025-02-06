@@ -19,7 +19,10 @@ export class UploadService {
     console.log(`🔹 AWS S3 Client Initialized`);
   }
 
-  async uploadToS3(file: Express.Multer.File): Promise<string> {
+  async uploadToS3(
+    file: Express.Multer.File,
+    googleId: string,
+  ): Promise<string> {
     if (!this.bucketName) {
       throw new HttpException(
         'AWS S3 Bucket Name is not defined',
@@ -27,8 +30,8 @@ export class UploadService {
       );
     }
 
-    const fileKey = `uploads/${Date.now()}_${file.originalname}`;
-    console.log(`📤 Uploading file: ${fileKey}`);
+    // ✅ Google ID를 포함한 파일 이름 생성
+    const fileKey = `uploads/${googleId}_${Date.now()}_${file.originalname}`;
 
     const params = {
       Bucket: this.bucketName,

@@ -13,15 +13,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Install Harbor certificate
-      run: |
-        sudo mkdir -p /usr/local/share/ca-certificates/harbor
-        echo "${{ secrets.HARBOR_CERT }}" > sudo tee /usr/local/share/ca-certificates/harbor/harbor.crt
-        sudo update-ca-certificates
 
     - name: Login to Harbor
       run: |
-        docker login https://192.168.2.76:443 -u cicd_sa -p ${{ secrets.HARBOR_PASSWORD }}
+        docker login https://192.168.2.76:443 -u cicd_sa -p ${{ secrets.HARBOR_PASSWORD }} --insecure
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
@@ -36,4 +31,4 @@ jobs:
 
     - name: Build and Push Docker Image
       run: |
-        docker buildx build --push --tag 192.168.2.76:443/hama/hama-image-upload:latest .
+        docker buildx build --push --tag 192.168.2.76:443/hama/hama-image-upload:latest --insecure .

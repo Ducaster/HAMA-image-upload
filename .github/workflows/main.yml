@@ -30,4 +30,4 @@ jobs:
 
     - name: Build and Push Docker Image
       run: |
-        docker buildx build --push --tag 192.168.2.76:443/hama/hama-image-upload:latest --insecure .
+        docker buildx build --push --tag 192.168.2.76:443/hama/hama-image-upload:latest .

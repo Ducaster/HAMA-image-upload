@@ -20,7 +20,7 @@ jobs:
     - name: Login to Harbor
       uses: docker/login-action@v2
       with:
-        registry: https://192.168.2.76:443
+        registry: 192.168.2.76:443
         username: ${{ secrets.HARBOR_USERNAME }}
         password: ${{ secrets.HARBOR_PASSWORD }}
 
@@ -29,18 +29,18 @@ jobs:
       with:
         context: .
         push: true
-        tags: https://192.168.2.76:443/your-project/your-image:${{ github.sha }}
-        cache-from: type=registry,ref=https://192.168.2.76:443/your-project/your-image:latest
+        tags: 192.168.2.76:443/your-project/your-image:${{ github.sha }}
+        cache-from: type=registry,ref=192.168.2.76:443/your-project/your-image:latest
         cache-to: type=inline
 
     - name: Update deployment file
       run: |
-        sed -i 's|image: .*|image: https://192.168.2.76:443/your-project/your-image:${{ github.sha }}|' deployment.yaml
+        sed -i 's|image: .*|image: 192.168.2.76:443/your-project/your-image:${{ github.sha }}|' deployment.yaml
 
     - name: Commit and push if changed
       run: |
-        git config --global user.email "dbfla704@gmail.com"
-        git config --global user.name "kmyourim"
+        git config --global user.email "github-actions@github.com"
+        git config --global user.name "GitHub Actions"
         git add deployment.yaml
         git commit -m "Update image tag" || exit 0
         git push

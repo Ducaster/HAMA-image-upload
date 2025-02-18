@@ -32,10 +32,13 @@ export class UploadController {
       files.map((file) => this.uploadService.uploadToS3(file, googleId)),
     );
 
-    await axios.post(
-      'http://localhost:3003/thumbnail', // ✅ 썸네일 생성 API URL (3003 포트에서 실행된다고 가정)
-      { imageUrls: uploadResults },
-    );
+    if (!process.env.THUMBNAIL_API_URL) {
+      throw new Error('THUMBNAIL_API_URL is not defined');
+    }
+
+    await axios.post(process.env.THUMBNAIL_API_URL as string, {
+      imageUrls: uploadResults,
+    });
 
     return { imageUrls: uploadResults };
   }

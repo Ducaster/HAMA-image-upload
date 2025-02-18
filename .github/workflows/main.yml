@@ -2,9 +2,7 @@ name: Docker Build and Push
 
 on:
   push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+    branches: master
 
 jobs:
   build-and-push:
@@ -19,23 +17,14 @@ jobs:
 
     - name: Install Harbor certificate
       run: |
-        sudo mkdir -p /etc/ssl/certs
-        echo "${{ secrets.HARBOR_CERT }}" > sudo /etc/ssl/certs/harbor.crt
+        sudo mkdir -p /usr/local/share/ca-certificates/harbor
+        echo "${{ secrets.HARBOR_CERT }}" | sudo tee /usr/local/share/ca-certificates/harbor/harbor.crt
         sudo update-ca-certificates
 
-
     - name: Login to Harbor
-      uses: docker/login-action@v2
-      with:
-        registry: 192.168.2.76:443
-        username: admin
-        password: Harbor12345
+      run: |
+        docker login https://192.168.2.76:443 -u cicd_sa -p ${{ secrets.HARBOR_PASSWORD }}
 
-    - name: Build and push Docker image
-      uses: docker/build-push-action@v4
-      with:
-        context: .
-        push: true
-        tags: 192.168.2.76:443/hama/hama-image-upload:${{ github.sha }}
-        cache-from: type=registry,ref=192.168.2.76:443/hama/hama-image-upload:latest
-        cache-to: type=inline
+    - name: Build and Push Docker Image
+      run: |
+        docker buildx build --push --tag 192.168.2.76:443/hama/hama-image-upload:latest .

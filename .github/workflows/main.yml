@@ -15,9 +15,9 @@ jobs:
 
     - name: Install Harbor certificate
       run: |
-        mkdir -p /usr/local/share/ca-certificates/harbor
-        echo "${{ secrets.HARBOR_CERT }}" > /usr/local/share/ca-certificates/harbor/harbor.crt
-        update-ca-certificates
+        sudo mkdir -p /usr/local/share/ca-certificates/harbor
+        echo "${{ secrets.HARBOR_CERT }}" > sudo tee /usr/local/share/ca-certificates/harbor/harbor.crt
+        sudo update-ca-certificates
 
     - name: Login to Harbor
       run: |

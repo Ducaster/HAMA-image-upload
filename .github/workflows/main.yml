@@ -19,9 +19,9 @@ jobs:
 
     - name: Install Harbor certificate
       run: |
-        mkdir -p /etc/ssl/certs
-        echo "${{ secrets.HARBOR_CERT }}" > /etc/ssl/certs/harbor.crt
-        update-ca-certificates
+        sudo mkdir -p /etc/ssl/certs
+        echo "${{ secrets.HARBOR_CERT }}" > sudo /etc/ssl/certs/harbor.crt
+        sudo update-ca-certificates
 
 
     - name: Login to Harbor

@@ -1,27 +1,39 @@
-name: CI-Harbor
+name: Build and Push Docker Image
 
 on:
   push:
     branches:
-      - master  # 또는 배포할 브랜치
+      - master  # Trigger on changes to the master branch
 
 jobs:
-  build-and-push:
-    runs-on: self-hosted  # Self-hosted runner 사용
+  build:
+    runs-on: self-hosted
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Login to Harbor
-        run: |
-          docker login https://192.168.2.76:443 -u yurim -p ${{ secrets.HARBOR_PASSWORD }}
+    - name: Install Harbor certificate
+      run: |
+        mkdir -p /usr/local/share/ca-certificates/harbor
+        echo "${{ secrets.HARBOR_CERT }}" > /usr/local/share/ca-certificates/harbor/harbor.crt
+        update-ca-certificates
 
-      - name: Placeholder for Docker Build (Dockerfile 없음)
-        run: |
-          echo "Dockerfile 없음 - 나중에 빌드 추가 예정"
-          
-      # Dockerfile이 생기면 아래 코드 활성화
-      # - name: Build and Push Docker Image
-      #   run: |
-      #     docker build -t 192.168.2.76:443/my-project/my-image:latest .
-      #     docker push 192.168.2.76:443/my-project/my-image:latest
+    - name: Login to Harbor
+      run: |
+        docker login https://192.168.2.76:443 -u cicd_sa -p ${{ secrets.HARBOR_PASSWORD }}
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Cache Docker layers
+      uses: actions/cache@v2
+      with:
+        path: /tmp/.buildx-cache
+        key: ${{ runner.os }}-buildx-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-buildx-
+
+    - name: Build and Push Docker Image
+      run: |
+        docker buildx build --push --tag 192.168.2.76:443/hama/hama-image-upload:latest .

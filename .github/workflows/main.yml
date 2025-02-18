@@ -13,12 +13,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Install Harbor certificate
-      run: |
-        mkdir -p /etc/ssl/certs
-        echo "${{ secrets.HARBOR_CERT }}" > /etc/ssl/certs/harbor.crt
-        update-ca-certificates
-
     - name: Login to Harbor
       run: |
         docker login https://192.168.2.76:443 -u cicd_sa -p ${{ secrets.HARBOR_PASSWORD }}

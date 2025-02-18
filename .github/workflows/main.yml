@@ -11,7 +11,13 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
+
+    - name: Install Harbor certificate
+      run: |
+        mkdir -p /etc/ssl/certs
+        echo "${{ secrets.HARBOR_CERT }}" > /etc/ssl/certs/harbor.crt
+        update-ca-certificates
 
     - name: Login to Harbor
       run: |
@@ -30,4 +36,4 @@ jobs:
 
     - name: Build and Push Docker Image
       run: |
-        docker buildx build --push --tag 192.168.2.76:443/hama/hama-image-upload:latest .
+        docker buildx build --push --tag 192.168.2.76:443/hama/hama-image-upload:latest --insecure .

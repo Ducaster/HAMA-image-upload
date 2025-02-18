@@ -21,8 +21,8 @@ jobs:
       uses: docker/login-action@v2
       with:
         registry: 192.168.2.76:443
-        username: ${{ secrets.HARBOR_USERNAME }}
-        password: ${{ secrets.HARBOR_PASSWORD }}
+        username: admin
+        password: Harbor12345
 
     - name: Build and push Docker image
       uses: docker/build-push-action@v4
@@ -32,15 +32,3 @@ jobs:
         tags: 192.168.2.76:443/hama/hama-image-upload:${{ github.sha }}
         cache-from: type=registry,ref=192.168.2.76:443/hama/hama-image-upload:latest
         cache-to: type=inline
-
-    - name: Update deployment file
-      run: |
-        sed -i 's|image: .*|image: 192.168.2.76:443/hama/hama-image-upload:${{ github.sha }}|' deployment.yaml
-
-    - name: Commit and push if changed
-      run: |
-        git config --global user.email "dbfla704@gmail.com"
-        git config --global user.name "kmyourim"
-        git add deployment.yaml
-        git commit -m "Update image tag" || exit 0
-        git push

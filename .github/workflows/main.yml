@@ -16,15 +16,16 @@ jobs:
       uses: docker/setup-buildx-action@v2
 
 
+    - name: Create Harbor CA certificate
+      run: |
+        sudo mkdir -p /etc/docker/certs.d/192.168.2.76
+        echo "${{ secrets.HARBOR_CA_CERT }}" > /etc/docker/certs.d/192.168.2.76/ca.crt
+        sudo systemctl restart docker
+        cat /etc/docker/certs.d/192.168.2.76/ca.crt
+
     - name: Login to Harbor
       run: |
-        mkdir -p ~/.docker
-        echo '{ "insecure-registries": ["192.168.2.76:443"] }' > ~/.docker/daemon.json
         docker login https://192.168.2.76:443 -u ${{ secrets.HARBOR_USERNAME }} -p ${{ secrets.HARBOR_PASSWORD }}
-
-    #- name: Login to Harbor
-      #run: |
-        #docker login https://192.168.2.76:443 -u ${{ secrets.HARBOR_USERNAME }} -p ${{ secrets.HARBOR_PASSWORD }}
 
     - name: Build and Push Docker Image
       run: |

@@ -18,8 +18,8 @@ jobs:
 
     - name: Login to Harbor
       run: |
-        docker login https://192.168.2.225 -u ${{ secrets.HARBOR_USERNAME }} -p ${{ secrets.HARBOR_PASSWORD }}
+        docker login https://192.168.2.225:80 -u ${{ secrets.HARBOR_USERNAME }} -p ${{ secrets.HARBOR_PASSWORD }}
 
     - name: Build and Push Docker Image
       run: |
-        docker buildx build --push --tag 192.168.2.76/hama/hama-image-upload:latest .
+        docker buildx build --push --tag 192.168.2.225:80/hama/hama-image-upload:latest .

@@ -19,7 +19,7 @@ jobs:
     - name: Create Harbor CA certificate
       run: |
         sudo mkdir -p /etc/docker/certs.d/192.168.2.76
-        echo "${{ secrets.HARBOR_CA_CERT }}" > /etc/docker/certs.d/192.168.2.76/ca.crt
+        echo "${{ secrets.HARBOR_CA_CERT }}" > sudo /etc/docker/certs.d/192.168.2.76/ca.crt
         sudo systemctl restart docker
         cat /etc/docker/certs.d/192.168.2.76/ca.crt
 

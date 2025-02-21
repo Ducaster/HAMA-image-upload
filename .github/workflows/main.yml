@@ -15,15 +15,14 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '22'
 
 
       - name: Login to Harbor
         run: |
-          docker login https://192.168.2.76:443 -u cicd_sa -p ${{ secrets.HARBOR_PASSWORD }}
-
-
+          docker login https://192.168.2.76:443 -u ${{ secrets.HARBOR_USERNAME }} -p ${{ secrets.HARBOR_PASSWORD }}
       - name: Build and push Docker images
         run: |
-          docker build -t 192.168.2.76:443/hama/hama-image-upload:latest .
-          docker push 192.168.2.76:443/hama/hama-image-upload:latest
+          BUILD_NUMBER=${{ github.run_number }} # GitHub Actions 빌드 번호
+          docker build -t 192.168.2.76:443/hama/hama-image-upload:$BUILD_NUMBER .
+          docker push 192.168.2.76:443/hama/hama-image-upload:$BUILD_NUMBER

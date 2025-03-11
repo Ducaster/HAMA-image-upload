@@ -9,7 +9,6 @@ import {
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { UploadService } from './upload.service';
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
-import axios from 'axios';
 
 @Controller('upload')
 export class UploadController {
@@ -31,15 +30,6 @@ export class UploadController {
     const uploadResults = await Promise.all(
       files.map((file) => this.uploadService.uploadToS3(file, googleId)),
     );
-
-    if (!process.env.THUMBNAIL_API_URL) {
-      throw new Error('THUMBNAIL_API_URL is not defined');
-    }
-
-    await axios.post(process.env.THUMBNAIL_API_URL as string, {
-      imageUrls: uploadResults,
-    });
-
     return { imageUrls: uploadResults };
   }
 }
